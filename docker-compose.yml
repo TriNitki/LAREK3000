@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  auth: 
+    container_name: AuthAPI
+    build:
+      context: AuthAPI
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+  catalog: 
+    container_name: CatalogAPI
+    build:
+      context: CatalogAPI
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+  delivery: 
+    container_name: DeliveryAPI
+    build:
+      context: DeliveryAPI
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8080"
+  order: 
+    container_name: OrderAPI
+    build:
+      context: OrderAPI
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8080"
