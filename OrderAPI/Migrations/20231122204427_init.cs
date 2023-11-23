@@ -16,7 +16,7 @@ namespace OrderAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreationDT = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreationDT = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     IsCanceled = table.Column<bool>(type: "boolean", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     BuyerId = table.Column<Guid>(type: "uuid", nullable: false),

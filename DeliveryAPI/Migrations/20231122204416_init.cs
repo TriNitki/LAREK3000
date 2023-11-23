@@ -16,9 +16,10 @@ namespace DeliveryAPI.Migrations
                 columns: table => new
                 {
                     DeliveryId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CourierID = table.Column<Guid>(type: "uuid", nullable: false),
+                    CourierId = table.Column<Guid>(type: "uuid", nullable: false),
                     CourierProfit = table.Column<decimal>(type: "numeric", nullable: false),
                     DeliveryDT = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    IsDelivered = table.Column<bool>(type: "boolean", nullable: false),
                     DeliveryAddress = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -32,11 +33,10 @@ namespace DeliveryAPI.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     OrderId = table.Column<Guid>(type: "uuid", nullable: false),
-                    IsRecieved = table.Column<bool>(type: "boolean", nullable: false),
+                    IsReceived = table.Column<bool>(type: "boolean", nullable: false),
                     IsCanceled = table.Column<bool>(type: "boolean", nullable: false),
                     ShippingDT = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ReceiptMethod = table.Column<string>(type: "text", nullable: false),
-                    ReceiptId = table.Column<Guid>(type: "uuid", nullable: false)
+                    ReceiptMethod = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

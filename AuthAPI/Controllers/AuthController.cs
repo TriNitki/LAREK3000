@@ -80,5 +80,35 @@ namespace AuthAPI.Controllers
 
             return Ok(userDto);
         }
+
+        [Authorize]
+        [HttpGet("GetCouriers")]
+        public async Task<IActionResult> GetCouriers()
+        {
+            var userDomains = await userManager.GetUsersInRoleAsync("Courier");
+
+            var userDtos = mapper.Map<List<UserDto>>(userDomains);
+
+            return Ok(userDtos);
+        }
+
+        //[Authorize(Roles = "Admin")]
+        [Authorize]
+        [HttpPatch("AddUserRole/{id:Guid}")]
+        public async Task<IActionResult> AddUserRole([FromRoute] Guid id, [FromBody] AddRoleDto roleDto)
+        {
+            var userDomain = await userManager.FindByIdAsync(id.ToString());
+
+            if (userDomain == null)
+            {
+                return NotFound();
+            }
+
+            await userManager.AddToRoleAsync(userDomain, roleDto.Role);
+            var newUserDomain = await userManager.FindByIdAsync(id.ToString());
+            var userDto = mapper.Map<UserDto>(newUserDomain);
+
+            return Ok(userDto);
+        }
     }
 }

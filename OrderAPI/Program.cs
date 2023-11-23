@@ -52,15 +52,18 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient<IAuthService, AuthService>();
 builder.Services.AddHttpClient<ICatalogService, CatalogService>();
+builder.Services.AddHttpClient<IDeliveryService, DeliveryService>();
 
 SD.AuthAPIBase = builder.Configuration["ServiceUrls:AuthAPI"];
 SD.CatalogAPIBase = builder.Configuration["ServiceUrls:CatalogAPI"];
+SD.DeliveryAPIBase = builder.Configuration["ServiceUrls:DeliveryAPI"];
 
 builder.Services.AddDbContext<OrderDbContext>();
 
 builder.Services.AddScoped<IBaseService, BaseService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICatalogService, CatalogService>();
+builder.Services.AddScoped<IDeliveryService, DeliveryService>();
 
 builder.Services.AddScoped<IOrderRepository, PostgresOrderRepository>();
 

@@ -28,7 +28,7 @@ namespace DeliveryAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CourierID")
+                    b.Property<Guid>("CourierId")
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("CourierProfit")
@@ -40,6 +40,9 @@ namespace DeliveryAPI.Migrations
 
                     b.Property<DateTime>("DeliveryDT")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsDelivered")
+                        .HasColumnType("boolean");
 
                     b.HasKey("DeliveryId");
 
@@ -55,18 +58,14 @@ namespace DeliveryAPI.Migrations
                     b.Property<bool>("IsCanceled")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsRecieved")
+                    b.Property<bool>("IsReceived")
                         .HasColumnType("boolean");
 
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ReceiptId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ReceiptMethod")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("ReceiptMethod")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("ShippingDT")
                         .HasColumnType("timestamp without time zone");

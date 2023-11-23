@@ -32,7 +32,7 @@ namespace OrderAPI.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreationDT")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsCanceled")
                         .HasColumnType("boolean");

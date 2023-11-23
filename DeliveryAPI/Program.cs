@@ -1,5 +1,7 @@
 using DeliveryAPI.Data;
 using DeliveryAPI.Mappings;
+using DeliveryAPI.Repositories;
+using DeliveryAPI.Repositories.IRepositories;
 using DeliveryAPI.Service;
 using DeliveryAPI.Service.IService;
 using DeliveryAPI.Utility;
@@ -47,8 +49,10 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient<IAuthService, AuthService>();
+builder.Services.AddHttpClient<IOrderService, OrderService>();
 
 SD.AuthAPIBase = builder.Configuration["ServiceUrls:AuthAPI"];
 SD.OrderAPIBase = builder.Configuration["ServiceUrls:OrderAPI"];
@@ -57,6 +61,14 @@ builder.Services.AddDbContext<DeliveryDbContext>();
 
 builder.Services.AddScoped<IBaseService, BaseService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICourierService, CourierService>();
+builder.Services.AddScoped<IDeliveryTimeService, DeliveryTimeService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IReceiptService, ReceiptService>();
+
+builder.Services.AddScoped<IDeliveryRepository, PostgresDeliveryRepository>();
+builder.Services.AddScoped<ICourierReceiptRepository, PostgresCourierReceiptRepository>();
+builder.Services.AddScoped<IPickupReceiptRepository, PostgresPickupReceiptRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 

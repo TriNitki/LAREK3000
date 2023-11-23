@@ -12,7 +12,7 @@ using OrderAPI.Data;
 namespace OrderAPI.Migrations
 {
     [DbContext(typeof(OrderDbContext))]
-    [Migration("20231117172354_init")]
+    [Migration("20231122204427_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -35,7 +35,7 @@ namespace OrderAPI.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreationDT")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsCanceled")
                         .HasColumnType("boolean");
