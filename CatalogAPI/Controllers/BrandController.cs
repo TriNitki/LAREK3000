@@ -2,6 +2,7 @@
 using CatalogAPI.Models.Domain;
 using CatalogAPI.Models.DTO.BrandDTO;
 using CatalogAPI.Repositories.IRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,6 +44,7 @@ namespace CatalogAPI.Controllers
             return Ok(brandDtos);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateBrandDto createBrandDto)
         {
@@ -55,6 +57,7 @@ namespace CatalogAPI.Controllers
             return CreatedAtAction(nameof(Get), new { id = brandDomain.Id }, brandDto);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{id:Guid}")]
         public async Task<IActionResult> UpdateName([FromRoute] Guid id, [FromBody] UpdateBrandNameDto updateBrandDto)
         {
@@ -65,6 +68,7 @@ namespace CatalogAPI.Controllers
             return Ok(brandDto);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:Guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {

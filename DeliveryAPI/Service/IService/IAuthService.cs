@@ -8,5 +8,6 @@ namespace DeliveryAPI.Service.IService
         Task<ResponseDto<UserDto>?> RegisterAsync(RegisterRequestDto registerRequestDto);
         Task<ResponseDto<UserDto>?> GetUserByIdAsync(Guid userId);
         Task<ResponseDto<UserDto>?> GetUserAsync(string accessToken);
+        Task<ResponseDto<List<UserDto?>>?> GetCouriers(string accessToken);
     }
 }

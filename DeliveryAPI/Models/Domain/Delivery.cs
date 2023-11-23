@@ -1,13 +1,14 @@
-﻿namespace DeliveryAPI.Models.Domain
+﻿using DeliveryAPI.Models.Enum;
+
+namespace DeliveryAPI.Models.Domain
 {
     public class Delivery
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public Guid OrderId { get; set; }
-        public bool IsRecieved { get; set; } = false;
+        public bool IsReceived { get; set; } = false;
         public bool IsCanceled { get; set; } = false;
         public DateTime ShippingDT { get; set; }
-        public string ReceiptMethod { get; set; }
-        public Guid ReceiptId { get; set; }
+        public ReceiptMethodEnum ReceiptMethod { get; set; }
     }
 }

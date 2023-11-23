@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using OrderAPI.Models.Domain;
+using OrderAPI.Models.DTO.DeliveryDTO;
 using OrderAPI.Models.DTO.OrderDTO;
+using OrderAPI.Models.Enum;
 using OrderAPI.Repositories.IRepositories;
 using OrderAPI.Service.IService;
 using System.Security.Claims;
@@ -17,13 +20,15 @@ namespace OrderAPI.Controllers
         private readonly IMapper mapper;
         private readonly IAuthService authService;
         private readonly ICatalogService catalogService;
+        private readonly IDeliveryService delivery;
 
-        public OrderController(IOrderRepository orderRepository, IMapper mapper, IAuthService authService, ICatalogService catalogService)
+        public OrderController(IOrderRepository orderRepository, IMapper mapper, IAuthService authService, ICatalogService catalogService, IDeliveryService delivery)
         {
             this.orderRepository = orderRepository;
             this.mapper = mapper;
             this.authService = authService;
             this.catalogService = catalogService;
+            this.delivery = delivery;
         }
 
         [HttpGet("{id:Guid}")]
@@ -34,6 +39,7 @@ namespace OrderAPI.Controllers
             var orderDomain = await orderRepository.GetByIdAsync(id);
             if (orderDomain == null)
             {
+                Console.WriteLine("order domain");
                 return NotFound();
             }
 
@@ -41,6 +47,7 @@ namespace OrderAPI.Controllers
             var productRequest = await catalogService.GetProductByIdAsync(orderDomain.ProductId);
             if (productRequest == null || !productRequest.IsSuccess || productRequest.Result == null)
             {
+                Console.WriteLine("product request");
                 return BadRequest();
             }
             var productDto = productRequest.Result;
@@ -49,6 +56,7 @@ namespace OrderAPI.Controllers
             var userRequest = await authService.GetUserByIdAsync(orderDomain.BuyerId);
             if (userRequest == null || !userRequest.IsSuccess || userRequest.Result == null)
             {
+                Console.WriteLine("user request");
                 return BadRequest();
             }
             var userDto = userRequest.Result;
@@ -63,7 +71,7 @@ namespace OrderAPI.Controllers
 
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Buyer")]
         public async Task<IActionResult> GetAll([FromQuery] bool? includeCanceled)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -78,21 +86,28 @@ namespace OrderAPI.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Buyer")]
         public async Task<IActionResult> Create([FromBody] CreateOrderDto createOrderDto)
         {
             // Get user id from session
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
             {
-                return Unauthorized();
+                return Unauthorized("No user id inside of session");
+            }
+
+            // Get access token
+            var accessToken = Request.Headers[HeaderNames.Authorization];
+            if (accessToken.ToString() == null)
+            {
+                return Unauthorized("Invalid access token");
             }
 
             // Get buyer from auth service
             var userRequest = await authService.GetUserByIdAsync(Guid.Parse(userId));
             if (userRequest == null || !userRequest.IsSuccess || userRequest.Result == null)
             {
-                return BadRequest();
+                return BadRequest("Can't find user");
             }
             var userDto = userRequest.Result;
 
@@ -100,7 +115,7 @@ namespace OrderAPI.Controllers
             var productRequest = await catalogService.GetProductByIdAsync(createOrderDto.ProductId);
             if (productRequest == null || !productRequest.IsSuccess || productRequest.Result == null)
             {
-                return BadRequest();
+                return BadRequest("Can't find product");
             }
             var productDto = productRequest.Result;
 
@@ -109,6 +124,40 @@ namespace OrderAPI.Controllers
             orderModel.BuyerId = userDto.Id;
 
             var orderDomain = await orderRepository.CreateAsync(orderModel);
+
+            var createDeliveryDto = new CreateDeliveryDto()
+            {
+                OrderId = orderDomain.Id,
+                Address = createOrderDto.Delivery.Address,
+                ReceiptMethod = createOrderDto.Delivery.ReceiptMethod
+            };
+
+            switch (createDeliveryDto.ReceiptMethod)
+            {
+                case (ReceiptMethodEnum.Courier):
+                    {
+                        var responseDelivery = await delivery.CreateCourierDelivery(createDeliveryDto, accessToken);
+
+                        if (responseDelivery == null || !responseDelivery.IsSuccess || responseDelivery.Result == null)
+                        {
+                            return BadRequest("Cant create delivery");
+                        }
+                        break;
+                    }
+                case (ReceiptMethodEnum.Pickup):
+                    {
+                        var responseDelivery = await delivery.CreatePickupDelivery(createDeliveryDto, accessToken);
+                        Console.WriteLine(responseDelivery.IsSuccess);
+                        Console.WriteLine(responseDelivery.Result.ShippingDT);
+
+                        if (responseDelivery == null || !responseDelivery.IsSuccess || responseDelivery.Result == null)
+                        {
+                            return BadRequest("Can't create delivery");
+                        }
+                        break;
+                    }
+                default: return BadRequest("Invalid delivery receipt method");
+            }
 
             // Map and insert data from external services
             var orderDto = mapper.Map<OrderDto>(orderDomain);
@@ -119,7 +168,7 @@ namespace OrderAPI.Controllers
         }
 
         [HttpPatch("{id:Guid}")]
-        [Authorize]
+        [Authorize(Roles = "Buyer")]
         public async Task<IActionResult> Cancel([FromRoute] Guid id, [FromBody] CancelOrderDto cancelOrderDto)
         {
             var orderDomain = await orderRepository.SetCancelStatusAsync(id, cancelOrderDto.IsCanceled);
@@ -153,7 +202,7 @@ namespace OrderAPI.Controllers
         }
 
         [HttpPut("{id:Guid}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateOrderDto updateOrderDto)
         {
             var orderModel = mapper.Map<Order>(updateOrderDto);

@@ -88,6 +88,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
+RolesData.SeedRoles(app.Services).Wait();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

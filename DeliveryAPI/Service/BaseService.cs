@@ -28,9 +28,16 @@ namespace DeliveryAPI.Service
                 // Set authorization
                 if (request.AccessToken != null)
                 {
-                    message.Headers.Add("Authorization", $"Bearer {request.AccessToken}");
+                    if (request.AccessToken.Contains("Bearer "))
+                    {
+                        message.Headers.Add("Authorization", request.AccessToken);
+                    }
+                    else
+                    {
+                        message.Headers.Add("Authorization", $"Bearer {request.AccessToken}");
+                    }
                 }
-                
+
                 var uri = new UriBuilder(request.Url);
 
                 // Add query parameters to URL
@@ -45,6 +52,8 @@ namespace DeliveryAPI.Service
                 }
                 
                 message.RequestUri = uri.Uri;
+
+                Console.WriteLine(JsonConvert.SerializeObject(request.Data));
 
                 // Add request body
                 if (request.Data != null)

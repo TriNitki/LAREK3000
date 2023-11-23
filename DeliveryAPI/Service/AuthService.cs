@@ -12,6 +12,17 @@ namespace DeliveryAPI.Service
         {
             this.baseService = baseService;
         }
+
+        public async Task<ResponseDto<List<UserDto?>>?> GetCouriers(string accessToken)
+        {
+            return await baseService.SendAsync<List<UserDto?>> (new RequestDto()
+            {
+                ApiType = SD.ApiType.GET,
+                Url = SD.AuthAPIBase + "/api/GetCouriers",
+                AccessToken = accessToken
+            });
+        }
+
         public async Task<ResponseDto<UserDto>?> GetUserAsync(string accessToken)
         {
             return await baseService.SendAsync<UserDto>(new RequestDto()
