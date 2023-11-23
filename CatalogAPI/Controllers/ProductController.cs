@@ -58,7 +58,7 @@ namespace CatalogAPI.Controllers
             return Ok(productDto);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Seller")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateProductDto createProductDto)
         {
@@ -89,7 +89,7 @@ namespace CatalogAPI.Controllers
             return Ok(productDto);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Seller")]
         [HttpPut("{id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateProductDto updateProductDto)
         {
@@ -114,7 +114,7 @@ namespace CatalogAPI.Controllers
             return Ok(productDto);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Seller")]
         [HttpDelete("{id:Guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {

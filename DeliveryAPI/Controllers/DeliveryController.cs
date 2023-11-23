@@ -134,7 +134,7 @@ namespace DeliveryAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Buyer")]
         [HttpGet("{id:Guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
@@ -202,25 +202,49 @@ namespace DeliveryAPI.Controllers
 
         }
 
-        [Authorize]
+        [Authorize(Roles = "Buyer")]
         [HttpGet("{orderId:Guid}")]
-        public async Task<IActionResult> GetByOrderId([FromRoute] Guid orderId)
+        public async Task<IActionResult> GetByOrderId([FromRoute] Guid orderId, [FromQuery] bool? isReceived, [FromQuery] bool? isCanceled)
         {
-            throw new NotImplementedException();
+            var deliveryDomains = await deliveryRepository.GetByOrderIdAsync(orderId, isReceived, isCanceled);
+
+            if (deliveryDomains == null)
+            {
+                return NotFound();
+            }
+
+            var deliveryDtos = mapper.Map<List<ReducedDeliveryDto>>(deliveryDomains);
+            return Ok(deliveryDtos);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Buyer")]
         [HttpPatch("{id:Guid}")]
         public async Task<IActionResult> SetCancelStatus([FromRoute] Guid id, [FromBody] SetCancelStatusDto cancelStatusDto)
         {
-            throw new NotImplementedException();
+            var deliveryDomain = await deliveryRepository.SetCancelStatusAsync(id, cancelStatusDto.IsCanceled);
+
+            if (deliveryDomain == null)
+            {
+                return NotFound();
+            }
+
+            var deliveryDto = mapper.Map<ReducedDeliveryDto>(deliveryDomain);
+            return Ok(deliveryDto);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Buyer")]
         [HttpPatch("{id:Guid}")]
         public async Task<IActionResult> SetReceiveStatus([FromRoute] Guid id, [FromBody] SetReceiveStatusDto receiveStatusDto)
         {
-            throw new NotImplementedException();
+            var deliveryDomain = await deliveryRepository.SetReceiveStatusAsync(id, receiveStatusDto.IsReceived);
+
+            if (deliveryDomain == null)
+            {
+                return NotFound();
+            }
+
+            var deliveryDto = mapper.Map<ReducedDeliveryDto>(deliveryDomain);
+            return Ok(deliveryDto);
         }
     }
 }

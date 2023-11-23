@@ -71,7 +71,7 @@ namespace OrderAPI.Controllers
 
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Buyer")]
         public async Task<IActionResult> GetAll([FromQuery] bool? includeCanceled)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -86,7 +86,7 @@ namespace OrderAPI.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Buyer")]
         public async Task<IActionResult> Create([FromBody] CreateOrderDto createOrderDto)
         {
             // Get user id from session
@@ -168,7 +168,7 @@ namespace OrderAPI.Controllers
         }
 
         [HttpPatch("{id:Guid}")]
-        [Authorize]
+        [Authorize(Roles = "Buyer")]
         public async Task<IActionResult> Cancel([FromRoute] Guid id, [FromBody] CancelOrderDto cancelOrderDto)
         {
             var orderDomain = await orderRepository.SetCancelStatusAsync(id, cancelOrderDto.IsCanceled);
@@ -202,7 +202,7 @@ namespace OrderAPI.Controllers
         }
 
         [HttpPut("{id:Guid}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateOrderDto updateOrderDto)
         {
             var orderModel = mapper.Map<Order>(updateOrderDto);

@@ -13,6 +13,7 @@ namespace DeliveryAPI.Mappings
             CreateMap<Delivery, DeliveryDto<CourierReceiptDto>>().ReverseMap();
             CreateMap<Delivery, DeliveryDto<PickupReceiptDto>>().ReverseMap();
             CreateMap<Delivery, CreateDeliveryDto>().ReverseMap();
+            CreateMap<Delivery, ReducedDeliveryDto>().ReverseMap();
 
             CreateMap<CourierReceipt, CreateCourierReceiptDto>().ReverseMap();
             CreateMap<CourierReceipt, CourierReceiptDto>().ReverseMap();

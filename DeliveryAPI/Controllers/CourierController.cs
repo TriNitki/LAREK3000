@@ -25,7 +25,7 @@ namespace DeliveryAPI.Controllers
             this.mapper = mapper;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Courier")]
         [HttpGet]
         public async Task<IActionResult> GetCourierDeliveries([FromQuery] bool sortByRecent = true, [FromQuery] bool includeDelivered = false)
         {
@@ -53,7 +53,7 @@ namespace DeliveryAPI.Controllers
             return Ok(response);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Courier")]
         [HttpGet]
         public async Task<IActionResult> GetCourierProfit([FromQuery] DateTime? deliveriesFrom, [FromQuery] DateTime? deliveriesTo)
         {
@@ -73,7 +73,7 @@ namespace DeliveryAPI.Controllers
             return Ok(response);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Courier")]
         [HttpPatch("{deliveryId:Guid}")]
         public async Task<IActionResult> SetDeliveryStatus([FromRoute] Guid deliveryId, [FromBody] SetDeliveryStatusDto deliveryStatusDto)
         {

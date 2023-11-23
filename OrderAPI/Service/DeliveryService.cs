@@ -13,23 +13,13 @@ namespace OrderAPI.Service
         {
             this.baseService = baseService;
         }
-        public async Task<ResponseDto<CreateDeliveryDto>?> Create(CreateDeliveryDto createDeliveryDto, string accessToken)
-        {
-            return await baseService.SendAsync<CreateDeliveryDto>(new RequestDto()
-            {
-                ApiType = SD.ApiType.POST,
-                Url = SD.CatalogAPIBase + $"/api/Delivery/Create",
-                Data = createDeliveryDto,
-                AccessToken = accessToken
-            });
-        }
 
         public async Task<ResponseDto<DeliveryDto<CourierReceiptDto>?>?> CreateCourierDelivery(CreateDeliveryDto createDeliveryDto, string accessToken)
         {
             return await baseService.SendAsync<DeliveryDto<CourierReceiptDto>?>(new RequestDto()
             {
                 ApiType = SD.ApiType.POST,
-                Url = SD.CatalogAPIBase + $"/api/Delivery/Create",
+                Url = SD.DeliveryAPIBase + "/api/Delivery/Create",
                 Data = createDeliveryDto,
                 AccessToken = accessToken
             });
@@ -40,7 +30,7 @@ namespace OrderAPI.Service
             return await baseService.SendAsync<DeliveryDto<PickupReceiptDto>?>(new RequestDto()
             {
                 ApiType = SD.ApiType.POST,
-                Url = SD.CatalogAPIBase + $"/api/Delivery/Create",
+                Url = SD.DeliveryAPIBase + "/api/Delivery/Create",
                 Data = createDeliveryDto,
                 AccessToken = accessToken
             });

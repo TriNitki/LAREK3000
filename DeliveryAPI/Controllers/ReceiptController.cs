@@ -28,7 +28,7 @@ namespace DeliveryAPI.Controllers
             this.mapper = mapper;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Buyer")]
         [HttpGet("{deliveryId:Guid}")]
         public async Task<IActionResult> GetByDeliveryId([FromRoute] Guid deliveryId)
         {
@@ -69,7 +69,7 @@ namespace DeliveryAPI.Controllers
             
         }
 
-        [Authorize]
+        [Authorize(Roles = "Buyer")]
         [HttpPost("[action]")]
         public async Task<IActionResult> CreateCourierReceipt([FromBody] CreateCourierReceiptDto courierReceiptDto)
         {
@@ -86,7 +86,7 @@ namespace DeliveryAPI.Controllers
             return Ok(receiptDto);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Buyer")]
         [HttpPost("[action]")]
         public async Task<IActionResult> CreatePickupReceipt([FromBody] CreatePickupReceiptDto pickupReceiptDto)
         {
