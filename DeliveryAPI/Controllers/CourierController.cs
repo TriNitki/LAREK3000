@@ -4,7 +4,6 @@ using DeliveryAPI.Models.DTO.ReceiptDTO;
 using DeliveryAPI.Repositories.IRepositories;
 using DeliveryAPI.Service.IService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -35,11 +34,13 @@ namespace DeliveryAPI.Controllers
                 return Unauthorized();
             }
 
-            var courierDto = (await authService.GetUserAsync(courierId)).Result;
-            if (courierDto == null)
+            var courierResponse = await authService.GetUserByIdAsync(Guid.Parse(courierId));
+            if (courierResponse == null)
             {
                 return NotFound();
             }
+
+            var courierDto = courierResponse.Result;
 
             var courierDeliveriesDomain = await courierReceiptRepository.GetByCourierIdAsync(Guid.Parse(courierId), sortByRecent, includeDelivered);
             var courierDeliveriesDto = mapper.Map<List<ReducedCourierReceiptDto>>(courierDeliveriesDomain);
@@ -83,12 +84,6 @@ namespace DeliveryAPI.Controllers
                 return Unauthorized();
             }
 
-            var courierDto = (await authService.GetUserAsync(courierId)).Result;
-            if (courierDto == null)
-            {
-                return NotFound();
-            }
-
             var courierReceiptDomain = await courierReceiptRepository.SetDeliveryStatus(deliveryId, deliveryStatusDto.IsDelivered);
 
             if (courierReceiptDomain == null)
@@ -97,7 +92,6 @@ namespace DeliveryAPI.Controllers
             }
 
             var courierReceiptDto = mapper.Map<CourierReceiptDto>(courierReceiptDomain);
-            courierReceiptDto.Courier = courierDto;
 
             return Ok(courierReceiptDto);
         }
