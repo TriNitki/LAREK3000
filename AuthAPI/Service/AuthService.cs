@@ -58,7 +58,8 @@ namespace AuthAPI.Service
             {
                 UserName = dto.Username,
                 Email = dto.Username,
-                Address = dto.Address
+                Address = dto.Address,
+                PhoneNumber = dto.PhoneNumber
             };
 
             var identityResult = await userManager.CreateAsync(identityUser, dto.Password);

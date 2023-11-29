@@ -12,6 +12,9 @@ namespace AuthAPI.Models.DTO
         public string Password { get; set; }
         [Required]
         public string? Address { get; set; }
+        [Required]
+        [DataType(DataType.PhoneNumber)]
+        public string PhoneNumber { get; set; }
 
         public string[] Roles { get; set; }
     }
